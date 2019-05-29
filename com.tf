@@ -9,7 +9,14 @@ resource "google_compute_subnetwork" "subnet" {
    name = "${var.name}-subnet"
    ip_cidr_range = "${var.subnet_cidr}"
    network       = "${var.name}-vpc"
-   depends_on = [google_compute_network.vpc.name]
+   depends_on = ["google_compute_network.vpc"]
+   region     = "${var.region}"
+}
+
+# VPC firewall Configuration
+resource "google_compute_firewall" "firewall" {
+   name = "${var.name}-firewall"
+   network = "${google_compute_network.vpc.name}"
 
    allow {
        protocol = "icmp"
@@ -25,7 +32,7 @@ resource "google_compute_subnetwork" "subnet" {
 
 #create a new instance
 resource "google_compute_instance" "default" {
-   name = "myvm"
+   name = "secondvm"
    machine_type = "f1-micro"
    zone = "us-central1-a"
    boot_disk {
